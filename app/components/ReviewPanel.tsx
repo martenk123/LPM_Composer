@@ -99,7 +99,7 @@ export default function ReviewPanel({ documentContent, onComplete }: ReviewPanel
               <EditorAvatar size="md" showStatus={true} />
               <div>
                 <h2 className="font-playfair text-2xl text-deep-black">
-                  Saskia's Werkbank
+                  Saskia&apos;s Werkbank
                 </h2>
                 <p className="font-ui text-sm text-deep-black/60">
                   Professionele redactie in uitvoering

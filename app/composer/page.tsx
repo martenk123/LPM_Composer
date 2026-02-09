@@ -987,7 +987,7 @@ export default function ComposerPage() {
                 <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 px-4 py-2 bg-deep-black text-white rounded-lg text-xs font-ui z-50 shadow-2xl max-w-[200px] border border-stone/20">
                   <div className="font-semibold mb-1">Bekijk in Review Panel</div>
                   <div className="text-white/80 text-[11px] leading-relaxed">
-                    Open Saskia's werkbank om de redactie te bekijken.
+                    Open Saskia&apos;s werkbank om de redactie te bekijken.
                   </div>
                   <div className="absolute top-full left-1/2 -translate-x-1/2 -mt-1 w-2 h-2 bg-deep-black rotate-45 border-r border-b border-stone/20"></div>
                 </div>
