@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { User, Edit } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
+import Image from "next/image";
 
 export default function GlobalHeader() {
   const pathname = usePathname();
@@ -24,12 +25,20 @@ export default function GlobalHeader() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 h-16 bg-deep-black flex items-center justify-between px-6 z-30">
+    <header className="fixed top-0 left-0 right-0 h-28 bg-deep-black flex items-center justify-between px-6 z-30">
       {/* Left Side - Logo */}
-      <div className="flex items-center gap-4">
-        <h1 className="text-white uppercase font-ui tracking-[0.3em] text-sm font-medium">
-          LA PLUME INTELLIGENCE
-        </h1>
+      <div className="flex items-center">
+        <div className="h-[100px] w-auto">
+          <Image
+            src="/LPM_Logo_Lang.svg"
+            alt="La Plume Intelligence"
+            width={500}
+            height={100}
+            className="h-full w-auto object-contain"
+            style={{ filter: 'brightness(0)' }}
+            priority
+          />
+        </div>
       </div>
 
       {/* Right Side - Status & User Profile */}

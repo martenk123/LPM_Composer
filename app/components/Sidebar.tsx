@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Home, PenTool, Folder, Settings } from "lucide-react";
+import { Home, PenTool, Folder, Settings, LucideIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface NavItem {
   name: string;
   href: string;
-  icon: React.ComponentType<{ size?: number; className?: string }>;
+  icon: LucideIcon;
 }
 
 const navItems: NavItem[] = [
@@ -24,7 +24,7 @@ export default function Sidebar() {
 
   return (
     <aside
-      className={`fixed left-0 top-16 h-[calc(100vh-4rem)] bg-white border-r border-stone transition-all duration-300 z-40 ${
+      className={`fixed left-0 top-28 h-[calc(100vh-7rem)] bg-white border-r border-stone transition-all duration-300 z-40 ${
         isExpanded ? "w-60" : "w-20"
       }`}
       onMouseEnter={() => setIsExpanded(true)}

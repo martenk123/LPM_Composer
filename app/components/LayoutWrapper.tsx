@@ -21,7 +21,7 @@ export default function LayoutWrapper({
       {/* Global Header - Full width, above sidebar */}
       <GlobalHeader />
 
-      <div className="flex min-h-screen pt-16">
+      <div className="flex min-h-screen pt-28">
         {/* Sidebar */}
         <Sidebar />
 
