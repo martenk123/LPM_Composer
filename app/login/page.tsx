@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles } from "lucide-react";
+import Image from "next/image";
 
 export default function LoginPage() {
-  const [accessCode, setAccessCode] = useState("");
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -23,17 +24,21 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-stone flex items-center justify-center px-4 animate-fade-in">
       <div className="w-full max-w-md">
-        {/* Logo/Title */}
+        {/* Logo - Top */}
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-white rounded-lg mb-6 border border-stone/50">
-            <Sparkles size={32} className="text-gold" />
+          <div className="flex justify-center mb-8">
+            <div className="h-24 w-auto">
+              <Image
+                src="/LPM_Logo_Lang.svg"
+                alt="La Plume"
+                width={400}
+                height={96}
+                className="h-full w-auto object-contain"
+                style={{ filter: 'brightness(0)' }}
+                priority
+              />
+            </div>
           </div>
-          <h1 className="font-playfair text-4xl text-deep-black mb-2">
-            La Plume
-          </h1>
-          <p className="font-ui text-sm text-deep-black/60 uppercase tracking-wider">
-            Intelligence
-          </p>
         </div>
 
         {/* Login Card */}
@@ -41,18 +46,36 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
-                htmlFor="access-code"
+                htmlFor="user-id"
                 className="block text-sm font-ui font-medium text-deep-black/70 mb-2 uppercase tracking-wide"
               >
-                Access Code
+                ID
               </label>
               <input
-                id="access-code"
-                type="password"
-                value={accessCode}
-                onChange={(e) => setAccessCode(e.target.value)}
+                id="user-id"
+                type="text"
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
                 className="w-full px-4 py-3 bg-off-white border border-stone rounded-md focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold font-ui text-deep-black placeholder-deep-black/30"
-                placeholder="Enter your access code"
+                placeholder="Voer je ID in"
+                required
+              />
+            </div>
+
+            <div>
+              <label
+                htmlFor="password"
+                className="block text-sm font-ui font-medium text-deep-black/70 mb-2 uppercase tracking-wide"
+              >
+                Wachtwoord
+              </label>
+              <input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full px-4 py-3 bg-off-white border border-stone rounded-md focus:outline-none focus:ring-2 focus:ring-gold/50 focus:border-gold font-ui text-deep-black placeholder-deep-black/30"
+                placeholder="Voer je wachtwoord in"
                 required
               />
             </div>
@@ -62,7 +85,7 @@ export default function LoginPage() {
               disabled={isLoading}
               className="w-full bg-deep-black text-white px-6 py-3 rounded-md font-ui text-sm font-medium uppercase tracking-wider hover:bg-deep-black/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              {isLoading ? "Connecting..." : "Connect to Intelligence"}
+              {isLoading ? "Verbinden..." : "Inloggen"}
             </button>
           </form>
         </div>

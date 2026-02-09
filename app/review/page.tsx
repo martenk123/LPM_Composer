@@ -11,10 +11,12 @@ export default function ReviewPage() {
 
   useEffect(() => {
     // Get document from localStorage
-    const reviewDoc = localStorage.getItem("reviewDocument");
-    if (reviewDoc) {
-      const doc = JSON.parse(reviewDoc);
-      setDocumentContent(doc.content || "");
+    if (typeof window !== "undefined") {
+      const reviewDoc = localStorage.getItem("reviewDocument");
+      if (reviewDoc) {
+        const doc = JSON.parse(reviewDoc);
+        setDocumentContent(doc.content || "");
+      }
     }
   }, []);
 
@@ -89,14 +91,9 @@ export default function ReviewPage() {
 
               {/* La Plume Watermark */}
               <div className="absolute top-8 right-8 opacity-10 pointer-events-none">
-                <div className="flex flex-col items-end">
-                  <h1 className="font-playfair text-2xl text-deep-black">
-                    La Plume
-                  </h1>
-                  <p className="font-ui text-xs text-deep-black uppercase tracking-wider">
-                    Intelligence
-                  </p>
-                </div>
+                <h1 className="font-playfair text-2xl text-deep-black">
+                  La Plume
+                </h1>
               </div>
 
               {/* Document Content */}

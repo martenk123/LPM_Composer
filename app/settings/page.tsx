@@ -1,22 +1,46 @@
 "use client";
 
-import { useState } from "react";
-import { Settings as SettingsIcon, Users, Palette } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Settings as SettingsIcon, Users, Palette, Crown, Sparkles, Check, LogOut, AlertTriangle } from "lucide-react";
+import { useBrandVoice } from "../contexts/BrandVoiceContext";
+import { useAccount } from "../contexts/AccountContext";
+import EditorAvatar from "../components/EditorAvatar";
+import { useRouter } from "next/navigation";
 
 type Tab = "general" | "brand-voice" | "team";
 
 export default function SettingsPage() {
+  const router = useRouter();
+  const { settings, updateSettings } = useBrandVoice();
+  const { accountTier, upgradeToPremium, downgradeToBasic, isPremium } = useAccount();
   const [activeTab, setActiveTab] = useState<Tab>("brand-voice");
-  const [coreValues, setCoreValues] = useState("Professional, Trustworthy, Innovative");
-  const [forbiddenWords, setForbiddenWords] = useState("cheap, guarantee, best");
-  const [targetAudience, setTargetAudience] = useState("B2B professionals, C-level executives");
-  const [toneFormal, setToneFormal] = useState(70); // 0 = Casual, 100 = Formal
-  const [toneLength, setToneLength] = useState(60); // 0 = Short, 100 = Long
+  const [coreValues, setCoreValues] = useState(settings.coreValues);
+  const [forbiddenWords, setForbiddenWords] = useState(settings.forbiddenWords);
+  const [targetAudience, setTargetAudience] = useState(settings.targetAudience);
+  const [toneFormal, setToneFormal] = useState(settings.toneFormal);
+  const [toneLength, setToneLength] = useState(settings.toneLength);
   const [isSaving, setIsSaving] = useState(false);
+  const [showDowngradeConfirm, setShowDowngradeConfirm] = useState(false);
+
+  // Sync local state with context
+  useEffect(() => {
+    setCoreValues(settings.coreValues);
+    setForbiddenWords(settings.forbiddenWords);
+    setTargetAudience(settings.targetAudience);
+    setToneFormal(settings.toneFormal);
+    setToneLength(settings.toneLength);
+  }, [settings]);
 
   const handleSave = async () => {
     setIsSaving(true);
-    // Simulate save
+    // Save to context (which saves to localStorage)
+    updateSettings({
+      coreValues,
+      forbiddenWords,
+      targetAudience,
+      toneFormal,
+      toneLength,
+    });
     await new Promise((resolve) => setTimeout(resolve, 500));
     setIsSaving(false);
     // Could add toast notification here
@@ -63,7 +87,7 @@ export default function SettingsPage() {
               </button>
               <button
                 onClick={() => setActiveTab("team")}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${
+                className={`w-full flex items-center gap-3 px-4 py-3 rounded-md transition-colors mb-1 ${
                   activeTab === "team"
                     ? "bg-gold/20 text-deep-black border-l-2 border-gold"
                     : "text-deep-black/60 hover:bg-stone/30"
@@ -72,16 +96,207 @@ export default function SettingsPage() {
                 <Users size={20} className="flex-shrink-0" />
                 <span className="font-ui text-sm font-medium">Team</span>
               </button>
+              
+              {/* Logout Button */}
+              <div className="pt-4 border-t border-stone/50 mt-2">
+                <button
+                  onClick={() => {
+                    if (typeof window !== "undefined") {
+                      // Clear all localStorage
+                      localStorage.clear();
+                      // Redirect to login
+                      router.push("/login");
+                    }
+                  }}
+                  className="w-full flex items-center gap-3 px-4 py-3 rounded-md transition-colors text-red-600 hover:bg-red-50 hover:text-red-700"
+                >
+                  <LogOut size={20} className="flex-shrink-0" />
+                  <span className="font-ui text-sm font-medium">Uitloggen</span>
+                </button>
+              </div>
             </nav>
           </aside>
 
           {/* Main Content */}
           <main className="flex-1">
+            {/* Upgrade naar Premium Sectie - Opvallend bovenaan */}
+            {!isPremium && (
+              <div className="mb-8 bg-gradient-to-br from-gold/20 via-gold/10 to-gold/5 rounded-lg border-2 border-gold p-8 relative overflow-hidden">
+                {/* Decorative elements */}
+                <div className="absolute top-0 right-0 w-64 h-64 bg-gold/5 rounded-full -mr-32 -mt-32"></div>
+                <div className="absolute bottom-0 left-0 w-48 h-48 bg-gold/5 rounded-full -ml-24 -mb-24"></div>
+                
+                <div className="relative z-10">
+                  <div className="flex items-start justify-between mb-6">
+                    <div className="flex items-center gap-4">
+                      <div className="w-16 h-16 bg-gold rounded-full flex items-center justify-center shadow-lg">
+                        <Crown size={32} className="text-deep-black" />
+                      </div>
+                      <div>
+                        <h2 className="font-playfair text-3xl text-deep-black mb-2">
+                          Upgrade naar Premium
+                        </h2>
+                        <p className="font-ui text-deep-black/70 text-sm mb-2">
+                          Ontgrendel alle premium functies en krijg toegang tot geavanceerde tools
+                        </p>
+                        <div className="flex items-baseline gap-2">
+                          <span className="font-playfair text-2xl text-deep-black">€299</span>
+                          <span className="font-ui text-sm text-deep-black/60">per maand</span>
+                        </div>
+                      </div>
+                    </div>
+                    <button
+                      onClick={upgradeToPremium}
+                      className="px-8 py-4 bg-gold text-deep-black rounded-lg font-ui text-sm font-medium uppercase tracking-wider hover:bg-gold/90 transition-all duration-300 shadow-lg hover:shadow-xl transform hover:scale-105 flex items-center gap-2"
+                    >
+                      <Sparkles size={18} />
+                      Upgrade Nu
+                    </button>
+                  </div>
+                  
+                  {/* Premium Features List */}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6">
+                    <div className="flex items-start gap-3 p-4 bg-white/50 rounded-lg border border-gold/20">
+                      <Check size={20} className="text-gold flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h3 className="font-ui text-sm font-medium text-deep-black mb-1">
+                          Onbeperkte AI-generaties
+                        </h3>
+                        <p className="font-ui text-xs text-deep-black/60">
+                          Geen limieten op het aantal woorden of documenten
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3 p-4 bg-white/50 rounded-lg border border-gold/20">
+                      <Check size={20} className="text-gold flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h3 className="font-ui text-sm font-medium text-deep-black mb-1">
+                          Geavanceerde Brand Voice
+                        </h3>
+                        <p className="font-ui text-xs text-deep-black/60">
+                          Meerdere voice profielen en geavanceerde aanpassingen
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3 p-4 bg-white/50 rounded-lg border border-gold/20">
+                      <Check size={20} className="text-gold flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h3 className="font-ui text-sm font-medium text-deep-black mb-1">
+                          Priority Support
+                        </h3>
+                        <p className="font-ui text-xs text-deep-black/60">
+                          Snelle reactietijden en persoonlijke ondersteuning
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start gap-3 p-4 bg-white/50 rounded-lg border border-gold/20">
+                      <Check size={20} className="text-gold flex-shrink-0 mt-0.5" />
+                      <div>
+                        <h3 className="font-ui text-sm font-medium text-deep-black mb-1">
+                          Export naar meerdere formaten
+                        </h3>
+                        <p className="font-ui text-xs text-deep-black/60">
+                          PDF, Word, HTML en meer export opties
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Premium Badge als gebruiker premium heeft */}
+            {isPremium && (
+              <div className="mb-8 bg-gradient-to-r from-gold/20 to-gold/10 rounded-lg border border-gold p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 bg-gold rounded-full flex items-center justify-center">
+                      <Crown size={24} className="text-deep-black" />
+                    </div>
+                    <div>
+                      <h3 className="font-playfair text-xl text-deep-black mb-1">
+                        Premium Account Actief
+                      </h3>
+                      <p className="font-ui text-sm text-deep-black/60 mb-1">
+                        Je hebt toegang tot alle premium functies
+                      </p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-playfair text-xl text-deep-black">€299</span>
+                        <span className="font-ui text-xs text-deep-black/60">per maand</span>
+                      </div>
+                    </div>
+                  </div>
+                  <span className="px-4 py-2 bg-gold text-deep-black rounded-full text-xs font-ui uppercase tracking-wide font-medium">
+                    Premium
+                  </span>
+                </div>
+                
+                {/* Saskia Redacteur Sectie */}
+                <div className="pt-4 border-t border-gold/30 flex items-center gap-4">
+                  <EditorAvatar size="lg" showStatus={true} />
+                  <div className="flex-1">
+                    <div className="flex items-center gap-2 mb-1">
+                      <h4 className="font-playfair text-lg text-deep-black">Saskia</h4>
+                      <span className="px-2 py-0.5 bg-green-500/20 text-green-700 rounded-full text-xs font-ui font-medium flex items-center gap-1.5">
+                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full"></span>
+                        Online
+                      </span>
+                    </div>
+                    <p className="font-ui text-sm text-deep-black/70 mb-1">
+                      Jouw Redacteur
+                    </p>
+                    <p className="font-ui text-xs text-deep-black/60">
+                      Stuur je documenten naar Saskia voor professionele redactie via de Composer
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Downgrade Button */}
+                <div className="pt-4 border-t border-gold/30 mt-4">
+                  <button
+                    onClick={() => setShowDowngradeConfirm(true)}
+                    className="w-full px-4 py-2 bg-stone/30 text-deep-black rounded-md font-ui text-sm font-medium hover:bg-stone/40 transition-colors"
+                  >
+                    Downgrade naar Basic
+                  </button>
+                </div>
+              </div>
+            )}
+
             {activeTab === "general" && (
               <div className="bg-white rounded-lg border border-stone p-8">
                 <h2 className="font-playfair text-3xl text-deep-black mb-6">
                   General Settings
                 </h2>
+                
+                {/* Huidig Abonnement */}
+                <div className="mb-8 p-6 bg-off-white rounded-lg border border-stone">
+                  <h3 className="font-playfair text-xl text-deep-black mb-4">
+                    Huidig Abonnement
+                  </h3>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="font-ui text-sm font-medium text-deep-black mb-1">
+                        {isPremium ? "Premium Account" : "Basic Account"}
+                      </p>
+                      <div className="flex items-baseline gap-2">
+                        <span className="font-playfair text-2xl text-deep-black">
+                          {isPremium ? "€299" : "€49"}
+                        </span>
+                        <span className="font-ui text-sm text-deep-black/60">per maand</span>
+                      </div>
+                    </div>
+                    {isPremium && (
+                      <span className="px-4 py-2 bg-gold text-deep-black rounded-full text-xs font-ui uppercase tracking-wide font-medium">
+                        Premium
+                      </span>
+                    )}
+                  </div>
+                </div>
+                
                 <p className="font-ui text-deep-black/60">
                   General settings coming soon...
                 </p>
@@ -94,7 +309,7 @@ export default function SettingsPage() {
                   Brand Voice
                 </h2>
                 <p className="font-ui text-sm text-deep-black/60 mb-8 uppercase tracking-wide">
-                  Configure how La Plume Intelligence writes for your brand
+                  Configureer hoe La Plume schrijft voor jouw merk
                 </p>
 
                 <div className="space-y-8">
@@ -245,6 +460,50 @@ export default function SettingsPage() {
           </main>
         </div>
       </div>
+
+      {/* Downgrade Confirm Modal */}
+      {showDowngradeConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 animate-fade-in">
+          <div className="bg-white rounded-lg shadow-xl border border-stone p-8 max-w-md mx-4 animate-fade-in">
+            <div className="mb-6">
+              <div className="flex items-center gap-4 mb-4">
+                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center">
+                  <AlertTriangle size={32} className="text-red-600" />
+                </div>
+                <div>
+                  <h3 className="font-playfair text-2xl text-deep-black mb-1">
+                    Downgrade naar Basic?
+                  </h3>
+                  <p className="font-ui text-xs text-deep-black/60">
+                    Bevestig je keuze
+                  </p>
+                </div>
+              </div>
+              <p className="font-ui text-deep-black/70 text-sm leading-relaxed">
+                Weet je zeker dat je wilt downgraden naar Basic? Je verliest toegang tot premium functies zoals redactie door Saskia.
+              </p>
+            </div>
+            
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowDowngradeConfirm(false)}
+                className="flex-1 px-6 py-3 bg-stone/30 text-deep-black rounded-md font-ui text-sm font-medium hover:bg-stone/40 transition-colors"
+              >
+                Annuleren
+              </button>
+              <button
+                onClick={() => {
+                  downgradeToBasic();
+                  setShowDowngradeConfirm(false);
+                }}
+                className="flex-1 px-6 py-3 bg-red-600 text-white rounded-md font-ui text-sm font-medium hover:bg-red-700 transition-colors"
+              >
+                Downgrade
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

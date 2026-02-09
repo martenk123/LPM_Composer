@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import Sidebar from "./Sidebar";
-import GlobalHeader from "./GlobalHeader";
 
 export default function LayoutWrapper({
   children,
@@ -11,17 +10,20 @@ export default function LayoutWrapper({
 }) {
   const pathname = usePathname();
   const isLoginPage = pathname === "/login";
+  const isRedactiePage = pathname === "/redactie";
 
   if (isLoginPage) {
     return <>{children}</>;
   }
 
+  // Redactie page gets fullscreen (no sidebar)
+  if (isRedactiePage) {
+    return <>{children}</>;
+  }
+
   return (
     <>
-      {/* Global Header - Full width, above sidebar */}
-      <GlobalHeader />
-
-      <div className="flex min-h-screen pt-28">
+      <div className="flex min-h-screen">
         {/* Sidebar */}
         <Sidebar />
 

@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Design Tokens - La Plume Intelligence */
+/* Design Tokens - La Plume */
 :root {
   /* Colors */
   --color-off-white: #F9F9F7;
@@ -14,6 +14,11 @@
   --font-inter: var(--font-inter);
   --font-playfair: var(--font-playfair);
   --font-mono: var(--font-mono);
+  --font-handwriting: var(--font-handwriting);
+}
+
+.font-handwriting {
+  font-family: var(--font-handwriting), cursive;
 }
 
 * {

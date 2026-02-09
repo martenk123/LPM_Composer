@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { User, Edit } from "lucide-react";
+import { User, Edit, LogOut } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
 import Image from "next/image";
 
@@ -17,9 +17,11 @@ export default function GlobalHeader() {
     setIsEditorMode(!isEditorMode);
     if (!isEditorMode) {
       // Navigate to review page if there's a document in review
-      const reviewDoc = localStorage.getItem("reviewDocument");
-      if (reviewDoc) {
-        router.push("/review");
+      if (typeof window !== "undefined") {
+        const reviewDoc = localStorage.getItem("reviewDocument");
+        if (reviewDoc) {
+          router.push("/review");
+        }
       }
     }
   };
@@ -31,8 +33,8 @@ export default function GlobalHeader() {
         <div className="h-[100px] w-auto">
           <Image
             src="/LPM_Logo_Lang.svg"
-            alt="La Plume Intelligence"
-            width={500}
+            alt="La Plume"
+            width={600}
             height={100}
             className="h-full w-auto object-contain"
             style={{ filter: 'brightness(0)' }}
@@ -68,12 +70,33 @@ export default function GlobalHeader() {
           </span>
         </div>
 
-        {/* User Profile */}
-        <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-deep-black/50 transition-colors">
-          <div className="w-8 h-8 bg-stone/20 rounded-full flex items-center justify-center border border-stone/30">
-            <User size={16} className="text-white" />
-          </div>
-        </button>
+        {/* User Profile & Logout */}
+        <div className="flex items-center gap-2">
+          <button className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-deep-black/50 transition-colors">
+            <div className="w-8 h-8 bg-stone/20 rounded-full flex items-center justify-center border border-stone/30">
+              <User size={16} className="text-white" />
+            </div>
+          </button>
+          {showEditorToggle && (
+            <button
+              onClick={() => {
+                if (typeof window !== "undefined") {
+                  // Clear all localStorage
+                  localStorage.clear();
+                  // Redirect to login
+                  router.push("/login");
+                }
+              }}
+              className="px-3 py-2 rounded-md hover:bg-deep-black/50 transition-colors flex items-center gap-2 border border-stone/20"
+              title="Uitloggen"
+            >
+              <LogOut size={16} className="text-white/70 hover:text-white transition-colors" />
+              <span className="text-xs font-ui text-white/70 hover:text-white transition-colors uppercase tracking-wide hidden sm:inline">
+                Uitloggen
+              </span>
+            </button>
+          )}
+        </div>
       </div>
     </header>
   );
