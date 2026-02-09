@@ -1,14 +1,14 @@
 "use client";
 
 import { useState } from "react";
-import { Home, PenTool, Folder, Settings, LucideIcon } from "lucide-react";
+import { Home, PenTool, Folder, Settings, LucideIcon } from "lucide-react"; // Zorg dat je LucideIcon bovenin importeert
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 interface NavItem {
   name: string;
   href: string;
-  icon: LucideIcon;
+  icon: LucideIcon; // Dit lost de 'size' mismatch op
 }
 
 const navItems: NavItem[] = [
